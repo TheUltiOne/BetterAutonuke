@@ -10,20 +10,26 @@ namespace BetterAutonuke
 {
     class EventHandlers
     {
+        public string FilterString(int i)
+        {
+            if (BetterAutonuke.Instance.Config.Announcement.Contains("{minutes}"))
+            {
+                var message = BetterAutonuke.Instance.Config.Announcement.Replace("{minutes}", ((int)(BetterAutonuke.Instance.Config.Time / BetterAutonuke.Instance.Config.Intervals * i / 60)).ToString());
+                return message;
+            }
+            else
+            {
+                return BetterAutonuke.Instance.Config.Announcement;
+            }
+        }
+
         public IEnumerator<float> Autonuke()
         {
             for (var i = 0; i < BetterAutonuke.Instance.Config.Intervals; i++)
             {
+                Cassie.Message(FilterString(i));
 
-                if (BetterAutonuke.Instance.Config.Announcement.Contains("{minutes}"))
-                {
-                    var message = BetterAutonuke.Instance.Config.Announcement.Replace("{minutes}", (BetterAutonuke.Instance.Config.Time / BetterAutonuke.Instance.Config.Intervals * i / 60).ToString());
-                    Cassie.Message(message);
-                } else {
-                    Cassie.Message(BetterAutonuke.Instance.Config.Announcement);
-                }
-
-                Map.Broadcast(5, $"<color=red><b>The Alpha Warhead</b></color> will detonate in <color=red><b>{BetterAutonuke.Instance.Config.Time / BetterAutonuke.Instance.Config.Intervals * i / 60}</b></color> minutes.");
+                Map.Broadcast(5, $"<color=red><b>The Alpha Warhead</b></color> will detonate in <color=red><b>{(int)BetterAutonuke.Instance.Config.Time / BetterAutonuke.Instance.Config.Intervals * i / 60}</b></color> minutes.");
                 yield return Timing.WaitForSeconds(BetterAutonuke.Instance.Config.Time / BetterAutonuke.Instance.Config.Intervals);
             }
 
